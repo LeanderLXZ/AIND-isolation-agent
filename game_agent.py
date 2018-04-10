@@ -46,9 +46,8 @@ def custom_score(game, player):
     w, h = game.width / 2., game.height / 2.
     y_m, x_m = game.get_player_location(player)
     y_o, x_o = game.get_player_location(game.get_opponent(player))
-    center_distant = math.sqrt((h - y_m) ** 2 + (w - x_m) ** 2)
     player_distant = math.sqrt((y_m - y_o) ** 2 + (x_m - y_o) ** 2)
-    return float(my_moves - opponent_moves)
+    return float(my_moves - opponent_moves * 2 + player_distant)
 
 
 def custom_score_2(game, player):
@@ -79,13 +78,6 @@ def custom_score_2(game, player):
     if game.is_winner(player):
         return float("inf")
 
-    # my_moves = len(game.get_legal_moves(player))
-    # opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    # w, h = game.width / 2., game.height / 2.
-    # y_m, x_m = game.get_player_location(player)
-    # center_distant = math.sqrt((h - y_m) ** 2 + (w - x_m) ** 2)
-    # return float(my_moves - opponent_moves + center_distant)
-
     my_moves = len(game.get_legal_moves(player))
     opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
     w, h = game.width / 2., game.height / 2.
@@ -93,7 +85,7 @@ def custom_score_2(game, player):
     y_o, x_o = game.get_player_location(game.get_opponent(player))
     center_distant = math.sqrt((h - y_m) ** 2 + (w - x_m) ** 2)
     player_distant = math.sqrt((y_m - y_o) ** 2 + (x_m - y_o) ** 2)
-    return float(my_moves - opponent_moves + center_distant)
+    return float(my_moves - opponent_moves - center_distant + player_distant)
 
 
 def custom_score_3(game, player):
@@ -124,10 +116,6 @@ def custom_score_3(game, player):
     if game.is_winner(player):
         return float("inf")
 
-    # my_moves = len(game.get_legal_moves(player))
-    # opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    # return float(my_moves - opponent_moves)
-
     my_moves = len(game.get_legal_moves(player))
     opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
     w, h = game.width / 2., game.height / 2.
@@ -135,7 +123,8 @@ def custom_score_3(game, player):
     y_o, x_o = game.get_player_location(game.get_opponent(player))
     center_distant = math.sqrt((h - y_m) ** 2 + (w - x_m) ** 2)
     player_distant = math.sqrt((y_m - y_o) ** 2 + (x_m - y_o) ** 2)
-    return float(my_moves - opponent_moves - center_distant)
+    return float(
+        my_moves - opponent_moves * 2 - center_distant + player_distant)
 
 
 class IsolationPlayer:

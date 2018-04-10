@@ -8,7 +8,7 @@ This project develops an adversarial search agent to play the game "Isolation". 
 
 This project uses a version of Isolation where each agent is restricted to L-shaped movements (like a knight in chess) on a rectangular grid (like a chess or checkerboard).  The agents can move to any open cell on the board that is 2-rows and 1-column or 2-columns and 1-row away from their current position on the board. Movements are blocked at the edges of the board (the board does not wrap around), however, the player can "jump" blocked or occupied spaces (just like a knight in chess).
 
-![Example game of isolation](viz.gif)
+![Example game of isolation](./images/viz.gif)
 
 Additionally, agents will have a fixed time limit each turn to search for the best move and respond.  If the time limit expires during a player's turn, that player forfeits the match, and the opponent wins.
 
@@ -133,7 +133,7 @@ player_distant = math.sqrt((y_m - y_o) ** 2 + (x_m - y_o) ** 2)
   score = float(my_moves - opponent_moves - player_distant)
   ```
 In order to evaluate these heuristic functions better, I set `NUM_MATCHES` to `10` and `TIME_LIMIT` to `500`. Then I got the performances table:
-![Factors of Heuristic Function](./factors.jpeg)
+![Factors of Heuristic Function](./images/factors.jpeg)
 
 ## Combination of Factors
 ---
@@ -150,7 +150,7 @@ Then I combined every two of factors as well as all of them to get candidates of
   ```
   score = float(my_moves - opponent_moves * 2 + player_distant)
   ```
-- ox2\_ncd() - opp\_x2() & neg\_center\_diss()
+- ox2\_ncd() - opp\_x2() & neg\_center\_dis()
   ```
   score = float(my_moves - opponent_moves * 2 - center_distant)
   ```
@@ -163,11 +163,11 @@ Then I combined every two of factors as well as all of them to get candidates of
   score = float(my_moves - opponent_moves * 2 - center_distant + player_distant)
   ```
 Performances Table:
-![Combination of Factors](./combinations.jpeg)
+![Combination of Factors](./images/combinations.jpeg)
 
 ## Final Heuristic Function
 ---
-Finally, from the performances table of conbination factors above, I decided the oder of final heuristic functions in `game_agent.py`:
+Finally, from the performances table of combination factors above, I decided the oder of final heuristic functions in `game_agent.py`:
 - custom\_score():
   > score = float(my_moves - opponent_moves * 2 + player_distant)
   > Win Rate: 66.4%
