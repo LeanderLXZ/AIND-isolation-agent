@@ -82,11 +82,16 @@ The `isoviz` folder contains a modified version of chessboard.js that can animat
 
 ## Experiments
 
-### Factors of Heuristic Function
-At first, I designed several heuristic functions based on `improved_score()` in `sample_players.py`, such as multiplying `my_moves` or `oppnent_moves` by a constant, adding `distance_from_center` or adding `distance_between_players`. But I didn't know which constant I should chose and the signs(positive or negtive) of these factors. So I refactored `tornament.py` in order to compare different signs(positive or negtive) of all these factors.
+## Factors of Heuristic Function
+---
+At first, I designed several factor based on `improved_score()` in `sample_players.py`, such as a coefficient multiplied to `my_moves` or `oppnent_moves`, `distance_from_center` or `distance_between_players`. But I didn't know which number of coefficient and signs(positive or negtive) of these factors I should choose. So I refactored `tornament.py` in order to compare different coefficients and signs(positive or negtive) of all these factors.
 
-Here are heuristic functions I designed for testing in `my_tornament.py`:
+Here are some heuristic functions I designed for testing in `my_tornament.py`:
 ```
+if game.is_loser(player):
+    return float("-inf")
+if game.is_winner(player):
+    return float("inf")
 my_moves = len(game.get_legal_moves(player))
 opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
 w, h = game.width / 2., game.height / 2.
@@ -127,11 +132,12 @@ player_distant = math.sqrt((y_m - y_o) ** 2 + (x_m - y_o) ** 2)
   ```
   score = float(my_moves - opponent_moves - player_distant)
   ```
-In order to evaluate these heuristic functions better, I set `NUM_MATCHES` to 10 and `TIME_LIMIT` to 500. Then I got the performance table:
-![IMAGE](./factors.jpeg)
-***
-### Combination of Factors
-Form the performance table above, I decided the sign of each factor:
+In order to evaluate these heuristic functions better, I set `NUM_MATCHES` to `10` and `TIME_LIMIT` to `500`. Then I got the performances table:
+![Factors of Heuristic Function](./factors.jpeg)
+
+## Combination of Factors
+---
+From the performance table above, I decided the sign of each factor:
 - Choice: opp\_x2
   > opp\_x2 > opp\_x3 = my\_x2 > my\_x3
 - Choice: neg\_center\_dis
@@ -156,12 +162,18 @@ Then I combined every two of factors as well as all of them to get candidates of
   ```
   score = float(my_moves - opponent_moves * 2 - center_distant + player_distant)
   ```
+Performances Table:
+![Combination of Factors](./combinations.jpeg)
 
-Performance Table:
-
-***
-### Final Heuristic Function
-Form the performance table of conbination factors above, I decided the oder of final heuristic functions:
+## Final Heuristic Function
+---
+Finally, from the performances table of conbination factors above, I decided the oder of final heuristic functions in `game_agent.py`:
 - custom\_score():
+  > score = float(my_moves - opponent_moves * 2 + player_distant)
+  > Win Rate: 66.4%
 - custom\_score\_2():
+  >score = float(my_moves - opponent_moves - center_distant + player_distant)
+  > Win Rate: 65.0%
 - custom\_score\_3():
+  > score = float(my_moves - opponent_moves * 2 - center_distant + player_distant)
+  > Win Rate: 61.4%
