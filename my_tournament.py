@@ -106,7 +106,7 @@ def play_matches(cpu_agents, test_agents, num_matches):
             ) for i in range(0, len(round_totals), 2)
         ]))
 
-    print("-" * 74)
+    print("-" * 85)
     print('{:^9}{:^13}'.format("", "Win Rate:") + ''.join([
         '{:^13}'.format("{:.1f}%".format(100 * total_wins[
             x[1].player] / total_matches)) for x in enumerate(test_agents)
@@ -234,20 +234,87 @@ def neg_player_dis(game, player):
     return float(my_moves - opponent_moves - player_distant)
 
 
+def ox2_ppd(game, player):
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    my_moves = len(game.get_legal_moves(player))
+    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    w, h = game.width / 2., game.height / 2.
+    y_m, x_m = game.get_player_location(player)
+    y_o, x_o = game.get_player_location(game.get_opponent(player))
+    player_distant = math.sqrt((y_m - y_o) ** 2 + (x_m - y_o) ** 2)
+    return float(my_moves - opponent_moves * 2 + player_distant)
+
+
+def ox2_ncd(game, player):
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    my_moves = len(game.get_legal_moves(player))
+    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    w, h = game.width / 2., game.height / 2.
+    y_m, x_m = game.get_player_location(player)
+    y_o, x_o = game.get_player_location(game.get_opponent(player))
+    center_distant = math.sqrt((h - y_m) ** 2 + (w - x_m) ** 2)
+    return float(my_moves - opponent_moves * 2 - center_distant)
+
+
+def ncd_ppd(game, player):
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    my_moves = len(game.get_legal_moves(player))
+    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    w, h = game.width / 2., game.height / 2.
+    y_m, x_m = game.get_player_location(player)
+    y_o, x_o = game.get_player_location(game.get_opponent(player))
+    center_distant = math.sqrt((h - y_m) ** 2 + (w - x_m) ** 2)
+    player_distant = math.sqrt((y_m - y_o) ** 2 + (x_m - y_o) ** 2)
+    return float(my_moves - opponent_moves - center_distant + player_distant)
+
+
+def ox2_ncd_ppd(game, player):
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    my_moves = len(game.get_legal_moves(player))
+    opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    w, h = game.width / 2., game.height / 2.
+    y_m, x_m = game.get_player_location(player)
+    y_o, x_o = game.get_player_location(game.get_opponent(player))
+    center_distant = math.sqrt((h - y_m) ** 2 + (w - x_m) ** 2)
+    player_distant = math.sqrt((y_m - y_o) ** 2 + (x_m - y_o) ** 2)
+    return float(
+        my_moves - opponent_moves * 2 - center_distant + player_distant)
+
+
 def main():
 
     # Define two agents to compare -- these agents will play from the same
     # starting position against the same adversaries in the tournament
     test_agents = [
         Agent(AlphaBetaPlayer(score_fn=improved_score), "AB_Improved"),
-        Agent(AlphaBetaPlayer(score_fn=opp_x2), "opp_x2"),
-        Agent(AlphaBetaPlayer(score_fn=my_x2), "my_x2"),
-        Agent(AlphaBetaPlayer(score_fn=opp_x3), "opp_x3"),
-        Agent(AlphaBetaPlayer(score_fn=my_x3), "my_x3"),
-        Agent(AlphaBetaPlayer(score_fn=pos_center_dis), "pos_ct_dis"),
-        Agent(AlphaBetaPlayer(score_fn=neg_center_dis), "neg_ct_dis"),
-        Agent(AlphaBetaPlayer(score_fn=pos_player_dis), "pos_p_dis"),
-        Agent(AlphaBetaPlayer(score_fn=neg_player_dis), "neg_p_dis")
+        Agent(AlphaBetaPlayer(score_fn=ox2_ppd), "ox2_ppd"),
+        Agent(AlphaBetaPlayer(score_fn=ox2_ncd), "ox2_ncd"),
+        Agent(AlphaBetaPlayer(score_fn=ncd_ppd), "ncd_ppd"),
+        Agent(AlphaBetaPlayer(score_fn=ox2_ncd_ppd), "ox2_ncd_ppd"),
+        # Agent(AlphaBetaPlayer(score_fn=pos_center_dis), "pos_ct_dis"),
+        # Agent(AlphaBetaPlayer(score_fn=neg_center_dis), "neg_ct_dis"),
+        # Agent(AlphaBetaPlayer(score_fn=pos_player_dis), "pos_p_dis"),
+        # Agent(AlphaBetaPlayer(score_fn=neg_player_dis), "neg_p_dis")
     ]
 
     # Define a collection of agents to compete against the test agents
@@ -262,9 +329,9 @@ def main():
     ]
 
     print(DESCRIPTION)
-    print("{:^138}".format("*************************"))
-    print("{:^138}".format("Playing Matches"))
-    print("{:^138}".format("*************************"))
+    print("{:^85}".format("*************************"))
+    print("{:^85}".format("Playing Matches"))
+    print("{:^85}".format("*************************"))
     play_matches(cpu_agents, test_agents, NUM_MATCHES)
 
 

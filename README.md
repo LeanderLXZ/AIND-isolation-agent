@@ -80,3 +80,88 @@ The tournament opponents are listed below.
 
 The `isoviz` folder contains a modified version of chessboard.js that can animate games played on a 7x7 board.  In order to use the board, you must run a local webserver by running `python -m http.server 8000` from your project directory (you can replace 8000 with another port number if that one is unavailable), then open your browser to `http://localhost:8000` and navigate to the `/isoviz/display.html` page.  Enter the move history of an isolation match (i.e., the array returned by the Board.play() method) into the text area and run the match.  Refresh the page to run a different game.  (Feel free to submit pull requests with improvements to isoviz.)
 
+## Experiments
+
+### Factors of Heuristic Function
+At first, I designed several heuristic functions based on `improved_score()` in `sample_players.py`, such as multiplying `my_moves` or `oppnent_moves` by a constant, adding `distance_from_center` or adding `distance_between_players`. But I didn't know which constant I should chose and the signs(positive or negtive) of these factors. So I refactored `tornament.py` in order to compare different signs(positive or negtive) of all these factors.
+
+Here are heuristic functions I designed for testing in `my_tornament.py`:
+```
+my_moves = len(game.get_legal_moves(player))
+opponent_moves = len(game.get_legal_moves(game.get_opponent(player)))
+w, h = game.width / 2., game.height / 2.
+y_m, x_m = game.get_player_location(player)
+y_o, x_o = game.get_player_location(game.get_opponent(player))
+center_distant = math.sqrt((h - y_m) ** 2 + (w - x_m) ** 2)
+player_distant = math.sqrt((y_m - y_o) ** 2 + (x_m - y_o) ** 2)
+```
+- opp\_x2() - `opponent_moves` is multiplied by 2
+  ```
+  score = float(my_moves - 2 * opponent_moves)
+  ```
+- my\_x2() - `my_moves` is multiplied by 2
+  ```
+  score = float(2 * my_moves - opponent_moves)
+  ```
+- opp\_x3() - `opponent_moves` is multiplied by 3
+  ```
+  score = float(my_moves - 3 * opponent_moves)
+  ```
+- my\_x3() - `my_moves` is multiplied by 3
+  ```
+  score = float(3 * my_moves - opponent_moves)
+  ```
+- pos\_center\_dis() - base score plus distance from the center of game board
+  ```
+  score = float(my_moves - opponent_moves + center_distant)
+  ```
+- neg\_center\_dis() - base score minus distance from the center of game board
+  ```
+  score = float(my_moves - opponent_moves - center_distant)
+  ```
+- pos\_player\_dis() - base score plus distance between players
+  ```
+  score = float(my_moves - opponent_moves + player_distant)
+  ```
+- neg\_player\_dis() - base score minus distance between players
+  ```
+  score = float(my_moves - opponent_moves - player_distant)
+  ```
+In order to evaluate these heuristic functions better, I set `NUM_MATCHES` to 10 and `TIME_LIMIT` to 500. Then I got the performance table:
+![IMAGE](./factors.jpeg)
+***
+### Combination of Factors
+Form the performance table above, I decided the sign of each factor:
+- Choice: opp\_x2
+  > opp\_x2 > opp\_x3 = my\_x2 > my\_x3
+- Choice: neg\_center\_dis
+  > neg\_center\_dis > pos\_center\_dis
+- Choice: pos\_player\_dis
+  > pos\_player\_dis > neg\_player\_dis
+
+Then I combined every two of factors as well as all of them to get candidates of the finally heuristic function:
+- ox2\_ppd() - opp\_x2() & pos\_player\_dis()
+  ```
+  score = float(my_moves - opponent_moves * 2 + player_distant)
+  ```
+- ox2\_ncd() - opp\_x2() & neg\_center\_diss()
+  ```
+  score = float(my_moves - opponent_moves * 2 - center_distant)
+  ```
+- ncd\_ppd() - neg\_center\_diss() & pos\_player\_dis()
+  ```
+  score = float(my_moves - opponent_moves - center_distant + player_distant)
+  ```
+- ox2\_ncd\_ppd() - opp\_x2() & neg\_center\_diss() & pos\_player\_dis()
+  ```
+  score = float(my_moves - opponent_moves * 2 - center_distant + player_distant)
+  ```
+
+Performance Table:
+
+***
+### Final Heuristic Function
+Form the performance table of conbination factors above, I decided the oder of final heuristic functions:
+- custom\_score():
+- custom\_score\_2():
+- custom\_score\_3():
