@@ -1,6 +1,7 @@
 
 # Build a Game-playing Agent
 
+
 ## Synopsis
 
 This project develops an adversarial search agent to play the game "Isolation".  Isolation is a deterministic, two-player game of perfect information in which the players alternate turns moving a single piece from one cell to another on a board.  Whenever either player occupies a cell, that cell becomes blocked for the remainder of the game.  The first player with no remaining legal moves loses, and the opponent is declared the winner.  These rules are implemented in the `isolation.Board` class provided in the repository.
@@ -10,6 +11,8 @@ This project uses a version of Isolation where each agent is restricted to L-sha
 Additionally, agents will have a fixed time limit each turn to search for the best move and respond.  If the time limit expires during a player's turn, that player forfeits the match, and the opponent wins.
 
 Additional files include example Player and evaluation functions, the game board class, and a template to develop local unit tests.
+
+![Example game of isolation](viz.gif)
 
 
 ### Quick Start Guide
