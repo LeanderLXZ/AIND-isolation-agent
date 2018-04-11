@@ -177,3 +177,8 @@ Finally, from the performances table of combination factors above, I decided the
 - custom\_score\_3():
   > score = float(my_moves - opponent_moves * 2 - center_distant + player_distant)
   > Win Rate: 61.4%
+### Analysis:
+It seems that `custom_score()` is the best heuristic function of all functions. In my opinion, the reson is as following:
+- `my_moves` maximize legal moves of active player so that player will get more opportunties in future decisions.
+- `-opponent_moves` minimize legal moves of opponent. This action help player 'isolate' the opponent. Also, in this heuristic function, `opponent_moves` is multiplied by 2, and this measure forces the player's strategy to be more radical, which means to be more aggressive.
+- `player_distant` maximize the distance between two players. Maybe the agent think it's better to stay away from the opponent and get more opportunties in future decisions.
